@@ -4,6 +4,10 @@
 
 {% block body %}
     <div style="display: flex; flex-direction: column; align-items: center; padding: 10px;">
+        <div id="rectangle" style="width: 100%; max-width: 59mm; height: 86mm; background-color: lightgray; margin-top: 20px;">
+            <!-- Rectangle above the search bar -->
+        </div>
+
         <div id="search-results" style="width: 100%; text-align: center;">
             <!-- Searched items will appear here -->
         </div>
@@ -12,19 +16,5 @@
             <label for="search-field" style="display: block; text-align: center;">Search:</label>
             <input type="text" id="search-field" placeholder="Search..." style="width: 100%; max-width: 400px; margin: 0 auto; display: block;">
         </div>
-
-        <div id="rectangle" style="width: 100%; max-width: 59mm; height: 86mm; background-color: lightgray; margin-top: 20px;">
-            <!-- Rectangle below the search bar -->
-        </div>
     </div>
-
-    <style>
-        @media (max-width: 600px) {
-            #rectangle {
-                width: 100%;
-                height: auto;
-                aspect-ratio: 59 / 86;
-            }
-        }
-    </style>
 {% endblock %}
