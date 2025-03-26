@@ -3,18 +3,82 @@
 {% block title %}Nibiru Token Calculator{% endblock %}
 
 {% block body %}
+
+    <!-- TODO: Add a navbar with title, language that change card name, reset button,  ... -->
+    <h1 style="text-align: center; margin-top: 20px;">Nibiru Token Calculator</h1>
+
     <div style="display: flex; flex-direction: column; align-items: center; padding: 10px;">
-        <div id="rectangle" style="width: 100%; max-width: 59mm; height: 86mm; background-color: lightgray; margin-top: 20px;">
-            <!-- Rectangle above the search bar -->
+        <img id="rectangle-image" src="/images/cards/primal_being_token.jpg" alt="Primal Being Token"
+             style="width: 19%;">
+
+        <div style="display: flex; justify-content: center;">
+            <div style="display: flex; flex-direction: column; align-items: center; width: 130px;">
+                <div style="display: flex; justify-content: center; align-items: center; width: 130px; height: 50px; background-color: #f0f0f0; border-radius: 10px;">
+                    <span style="font-size: 20px;">ATK / </span>
+                    <span id="atk" style="font-size: 20px;">0</span>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; align-items: center; width: 130px;">
+                <div style="display: flex; justify-content: center; align-items: center; width: 130px; height: 50px; background-color: #f0f0f0; border-radius: 10px;">
+                    <span style="font-size: 20px;">DEF / </span>
+                    <span id="def" style="font-size: 20px;">0</span>
+                </div>
+            </div>
         </div>
 
-        <div id="search-results" style="width: 100%; text-align: center;">
-            <!-- Searched items will appear here -->
+
+        <div style="width: 100%; text-align: center; margin-top: 20px;">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <ul id="search-results" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; width: 50%;">
+                </ul>
+            </div>
         </div>
 
         <div style="margin-top: 20px; width: 100%;">
-            <label for="search-field" style="display: block; text-align: center;">Search:</label>
-            <input type="text" id="search-field" placeholder="Search..." style="width: 100%; max-width: 400px; margin: 0 auto; display: block;">
+            {{ component('CardSearch') }}
         </div>
     </div>
+    <script>
+        let totalAtk = 0;
+        let totalDef = 0;
+
+        function addToSearchResults(imageURL, name, atk, def) {
+            const searchResults = document.getElementById('search-results');
+            const maxCards = 12;
+
+            if (searchResults.children.length >= maxCards) {
+                alert('Maximum number of cards reached.');
+                return;
+            }
+
+            const cardContainer = document.createElement('div');
+            cardContainer.style.display = 'flex';
+            cardContainer.style.flexDirection = 'column';
+            cardContainer.style.alignItems = 'center';
+            cardContainer.onclick = function () {
+                searchResults.removeChild(cardContainer);
+                totalAtk -= parseInt(atk, 10);
+                totalDef -= parseInt(def, 10);
+
+                document.getElementById('atk').textContent = totalAtk;
+                document.getElementById('def').textContent = totalDef;
+            };
+
+            const img = document.createElement('img');
+            img.src = imageURL;
+            img.style.width = '100%';
+            img.alt = name;
+
+            cardContainer.appendChild(img);
+            searchResults.appendChild(cardContainer);
+
+            // Update total attack and defense
+            totalAtk += parseInt(atk, 10);
+            totalDef += parseInt(def, 10);
+
+            document.getElementById('atk').textContent = totalAtk;
+            document.getElementById('def').textContent = totalDef;
+        }
+    </script>
 {% endblock %}

@@ -16,31 +16,24 @@ class NibiruTokenCalculatorController extends AbstractController
     #[Route('/index')]
     public function index(): Response
     {
+
         return $this->render('index/index.html.twig');
     }
 
     private function uploadImages(HttpClientInterface $client, EntityManagerInterface $entityManager): Response
     {
         $cards = $entityManager->getRepository(Card::class)->findAll();
-        // TODO: Just use the Nibiru Token full image and small images for the rest of the cards
-        $fullImageDir = $this->getParameter('kernel.project_dir') . '/public/images/cards/full/';
         $smallImageDir = $this->getParameter('kernel.project_dir') . '/public/images/cards/small/';
 
-        if (!is_dir($fullImageDir)) {
-            mkdir($fullImageDir, 0777, true);
-        }
         if (!is_dir($smallImageDir)) {
             mkdir($smallImageDir, 0777, true);
         }
 
         foreach ($cards as $card) {
-            $fullImage = $client->request('GET', 'https://images.ygoprodeck.com/images/cards/' . $card->getId() . '.jpg');
             $smallImage = $client->request('GET', 'https://images.ygoprodeck.com/images/cards_small/' . $card->getId() . '.jpg');
 
-            file_put_contents($fullImageDir . $card->getId() . '_full.jpg', $fullImage->getContent());
             file_put_contents($smallImageDir . $card->getId() . '_small.jpg', $smallImage->getContent());
 
-            $card->setFullImageURL('/images/cards/full/' . $card->getId() . '_full.jpg');
             $card->setSmallImageURL('/images/cards/small/' . $card->getId() . '_small.jpg');
             $entityManager->flush();
         }

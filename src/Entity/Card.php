@@ -22,9 +22,6 @@ class Card
     private ?int $def = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $fullImageURL = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
     private ?string $smallImageURL = null;
 
     public function getId(): ?int
@@ -69,18 +66,6 @@ class Card
     public function setDef(?int $def): static
     {
         $this->def = $def;
-
-        return $this;
-    }
-
-    public function getFullImageURL(): ?string
-    {
-        return $this->fullImageURL;
-    }
-
-    public function setFullImageURL(?string $fullImageURL): static
-    {
-        $this->fullImageURL = $fullImageURL;
 
         return $this;
     }
