@@ -18,8 +18,37 @@ class NibiruTokenCalculatorController extends AbstractController
     {
         return $this->render('index/index.html.twig');
     }
-    #[Route('/create-cards')]
-    public function createCards(HttpClientInterface $client, EntityManagerInterface $entityManager): Response
+
+    private function uploadImages(HttpClientInterface $client, EntityManagerInterface $entityManager): Response
+    {
+        $cards = $entityManager->getRepository(Card::class)->findAll();
+        // TODO: Just use the Nibiru Token full image and small images for the rest of the cards
+        $fullImageDir = $this->getParameter('kernel.project_dir') . '/public/images/cards/full/';
+        $smallImageDir = $this->getParameter('kernel.project_dir') . '/public/images/cards/small/';
+
+        if (!is_dir($fullImageDir)) {
+            mkdir($fullImageDir, 0777, true);
+        }
+        if (!is_dir($smallImageDir)) {
+            mkdir($smallImageDir, 0777, true);
+        }
+
+        foreach ($cards as $card) {
+            $fullImage = $client->request('GET', 'https://images.ygoprodeck.com/images/cards/' . $card->getId() . '.jpg');
+            $smallImage = $client->request('GET', 'https://images.ygoprodeck.com/images/cards_small/' . $card->getId() . '.jpg');
+
+            file_put_contents($fullImageDir . $card->getId() . '_full.jpg', $fullImage->getContent());
+            file_put_contents($smallImageDir . $card->getId() . '_small.jpg', $smallImage->getContent());
+
+            $card->setFullImageURL('/images/cards/full/' . $card->getId() . '_full.jpg');
+            $card->setSmallImageURL('/images/cards/small/' . $card->getId() . '_small.jpg');
+            $entityManager->flush();
+        }
+
+        return new Response('Images uploaded!');
+    }
+
+    private function createCards(HttpClientInterface $client, EntityManagerInterface $entityManager): Response
     {
         $response = $client->request('GET', 'https://db.ygoprodeck.com/api/v7/cardinfo.php');
         $data = $response->toArray();
@@ -27,12 +56,11 @@ class NibiruTokenCalculatorController extends AbstractController
         $cardsData = $data['data'] ?? [];
 
         $count = 0;
-        $batchSize = 100;
+        $batchSize = 50;
 
         foreach ($cardsData as $cardData) {
             if ($cardData['type'] === 'Skill Card' ||
                 $cardData['type'] === 'Spell Card' ||
-                // TODO: Manually add continous trap cards that special summon themselves
                 $cardData['type'] === 'Trap Card' ||
                 $cardData['type'] === 'Token') {
                 continue;
@@ -43,7 +71,6 @@ class NibiruTokenCalculatorController extends AbstractController
             $card->setName($cardData['name']);
             $card->setAtk($cardData['atk'] ?? 0);
             $card->setDef($cardData['def'] ?? 0);
-            // TODO: Fetch and set the images as blobs
             $entityManager->persist($card);
 
             // Every 50 inserts, flush and clear

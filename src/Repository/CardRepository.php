@@ -16,6 +16,15 @@ class CardRepository extends ServiceEntityRepository
         parent::__construct($registry, Card::class);
     }
 
+    // Return every card id in the database
+    public function findAllCardIds(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c.id')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Card[] Returns an array of Card objects
     //     */

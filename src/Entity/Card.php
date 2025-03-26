@@ -3,10 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\CardRepository;
-use Doctrine\DBAL\Types\BlobType;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\UX\Turbo\Attribute\Broadcast;
 
 #[ORM\Entity(repositoryClass: CardRepository::class)]
 class Card
@@ -24,11 +21,11 @@ class Card
     #[ORM\Column(nullable: true)]
     private ?int $def = null;
 
-    #[ORM\Column(type: Types::BLOB, nullable: true)]
-    private BlobType|null $fullImage = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $fullImageURL = null;
 
-    #[ORM\Column(type: Types::BLOB, nullable: true)]
-    private BlobType|null $smallImage = null;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $smallImageURL = null;
 
     public function getId(): ?int
     {
@@ -48,30 +45,6 @@ class Card
     public function setName(string $name): static
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getFullImage(): BlobType|null
-    {
-        return $this->fullImage;
-    }
-
-    public function setFullImage($fullImage): static
-    {
-        $this->fullImage = $fullImage;
-
-        return $this;
-    }
-
-    public function getSmallImage(): BlobType|null
-    {
-        return $this->smallImage;
-    }
-
-    public function setSmallImage($smallImage): static
-    {
-        $this->smallImage = $smallImage;
 
         return $this;
     }
@@ -96,6 +69,30 @@ class Card
     public function setDef(?int $def): static
     {
         $this->def = $def;
+
+        return $this;
+    }
+
+    public function getFullImageURL(): ?string
+    {
+        return $this->fullImageURL;
+    }
+
+    public function setFullImageURL(?string $fullImageURL): static
+    {
+        $this->fullImageURL = $fullImageURL;
+
+        return $this;
+    }
+
+    public function getSmallImageURL(): ?string
+    {
+        return $this->smallImageURL;
+    }
+
+    public function setSmallImageURL(?string $smallImageURL): static
+    {
+        $this->smallImageURL = $smallImageURL;
 
         return $this;
     }
