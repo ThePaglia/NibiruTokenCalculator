@@ -8,7 +8,7 @@
     <h1 id="title">Nibiru Token Calculator</h1>
 
     <div id="external-container">
-        <img id="nibiru-token-image" src="/images/cards/primal_being_token.jpg" alt="Primal Being Token">
+        <img id="nibiru-token-image" src=" {{ asset('images/cards/primal_being_token.jpg') }}" alt="Primal Being Token">
 
         <div id="stats-container">
             <div id="atk-container">
@@ -46,8 +46,8 @@
             cardContainer.id = 'selected-card';
             cardContainer.onclick = function () {
                 selectedCards.removeChild(cardContainer);
-                totalAtk -= parseInt(atk, 10);
-                totalDef -= parseInt(def, 10);
+                totalAtk -= parseInt(atk, 10) < 0 ? 0 : parseInt(atk, 10);
+                totalDef -= parseInt(def, 10) < 0 ? 0 : parseInt(def, 10);
 
                 document.getElementById('atk').textContent = totalAtk;
                 document.getElementById('def').textContent = totalDef;
@@ -62,11 +62,25 @@
             selectedCards.appendChild(cardContainer);
 
             // Update total attack and defense
-            totalAtk += parseInt(atk, 10);
-            totalDef += parseInt(def, 10);
+            totalAtk += parseInt(atk, 10) < 0 ? 0 : parseInt(atk, 10);
+            totalDef += parseInt(def, 10) < 0 ? 0 : parseInt(def, 10);
 
             document.getElementById('atk').textContent = totalAtk;
             document.getElementById('def').textContent = totalDef;
         }
+
+        function checkAndAddSingleCard() {
+            const searchResults = document.getElementById('search-results');
+            if (searchResults.children.length === 1) {
+                const card = searchResults.children[0];
+                const img = card.querySelector('img');
+                addToSelectedCards(img.src, img.alt, img.getAttribute('data-atk'), img.getAttribute('data-def'));
+            }
+        }
+
+        const observer = new MutationObserver(checkAndAddSingleCard);
+        const config = {childList: true};
+        const searchResults = document.getElementById('search-results');
+        observer.observe(searchResults, config);
     </script>
 {% endblock %}
