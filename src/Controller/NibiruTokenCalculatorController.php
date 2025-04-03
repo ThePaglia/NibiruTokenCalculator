@@ -16,9 +16,10 @@ class NibiruTokenCalculatorController extends AbstractController
     #[Route('/index')]
     public function index(): Response
     {
-
         return $this->render('index/index.html.twig');
     }
+
+    // TODO: add an update function to update the database with new cards
 
     private function uploadImages(HttpClientInterface $client, EntityManagerInterface $entityManager): Response
     {
