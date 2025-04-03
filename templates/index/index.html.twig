@@ -78,9 +78,21 @@
             }
         }
 
-        const observer = new MutationObserver(checkAndAddSingleCard);
+        const searchResultsObserver = new MutationObserver(checkAndAddSingleCard);
         const config = {childList: true};
         const searchResults = document.getElementById('search-results');
-        observer.observe(searchResults, config);
+        searchResultsObserver.observe(searchResults, config);
+
+        function resetStats() {
+            totalAtk = 0;
+            totalDef = 0;
+            document.getElementById('atk').textContent = totalAtk;
+            document.getElementById('def').textContent = totalDef;
+        }
+
+        function resetSearch() {
+            document.getElementById('selected-results').innerHTML = '';
+            resetStats();
+        }
     </script>
 {% endblock %}
