@@ -4,7 +4,7 @@
 
 {% block body %}
 
-    <!-- TODO: Add a navbar with title, language that change card name, reset button, back to top button ... -->
+    <!-- TODO: Add a navbar with title, language that change card name, back to top button ... -->
     <h1 id="title">Nibiru Token Calculator</h1>
 
     <div id="external-container">
@@ -29,6 +29,7 @@
 
         {{ component('CardSearch') }}
     </div>
+    <button id="back-to-top">Back to Top</button>
     <script>
         let totalAtk = 0;
         let totalDef = 0;
@@ -94,5 +95,24 @@
             document.getElementById('selected-results').innerHTML = '';
             resetStats();
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            let backToTopButton = document.getElementById("back-to-top");
+
+            window.addEventListener("scroll", function () {
+                if (window.scrollY > 300) {
+                    backToTopButton.style.display = "block";
+                } else {
+                    backToTopButton.style.display = "none";
+                }
+            });
+
+            backToTopButton.addEventListener("click", function () {
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            });
+        });
     </script>
 {% endblock %}
