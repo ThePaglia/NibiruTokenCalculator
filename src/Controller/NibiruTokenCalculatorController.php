@@ -19,26 +19,38 @@ class NibiruTokenCalculatorController extends AbstractController
         return $this->render('index/index.html.twig');
     }
 
-    // TODO: add an update function to update the database with new cards
-
     private function uploadImages(HttpClientInterface $client, EntityManagerInterface $entityManager): Response
     {
         $cards = $entityManager->getRepository(Card::class)->findAll();
-        $smallImageDir = $this->getParameter('kernel.project_dir') . '/public/images/cards/small/';
 
+        $smallImageDir = $this->getParameter('kernel.project_dir') . '/public/images/cards/small/';
         if (!is_dir($smallImageDir)) {
             mkdir($smallImageDir, 0777, true);
         }
 
+        $batchSize = 50;
+        $count = 0;
+
         foreach ($cards as $card) {
+            // Check if the card already exists in the database
+            if ($card->getSmallImageURL() !== null) {
+                continue; // Skip if the card already has a small image
+            }
             $smallImage = $client->request('GET', 'https://images.ygoprodeck.com/images/cards_small/' . $card->getId() . '.jpg');
 
             file_put_contents($smallImageDir . $card->getId() . '_small.jpg', $smallImage->getContent());
 
             $card->setSmallImageURL('/images/cards/small/' . $card->getId() . '_small.jpg');
-            $entityManager->flush();
+            printf("Card %s small image set\n", $card->getName());
+            if ($count % $batchSize === 0) {
+                $entityManager->flush();
+                $entityManager->clear(); // frees memory by detaching all entities
+            }
+            $count++;
         }
 
+        $entityManager->flush();
+        $entityManager->clear(); // frees memory by detaching all entities
         return new Response('Images uploaded!');
     }
 
@@ -49,8 +61,10 @@ class NibiruTokenCalculatorController extends AbstractController
 
         $cardsData = $data['data'] ?? [];
 
-        $count = 0;
+        $existingCardsIds = $entityManager->getRepository(Card::class)->findAllCardIds();
+
         $batchSize = 50;
+        $count = 0;
 
         foreach ($cardsData as $cardData) {
             if ($cardData['type'] === 'Skill Card' ||
@@ -59,6 +73,12 @@ class NibiruTokenCalculatorController extends AbstractController
                 $cardData['type'] === 'Token') {
                 continue;
             }
+
+            // Check if the card already exists in the database
+            if (in_array($cardData['id'], $existingCardsIds, true)) {
+                continue; // Skip if the card already exists
+            }
+
             $card = new Card();
             // Map API data to your Card entity; adjust these setter calls based on your entity properties
             $card->setId($cardData['id']);
@@ -74,10 +94,18 @@ class NibiruTokenCalculatorController extends AbstractController
             }
             $count++;
             printf("Inserted card %s\n", $card->getName());
-            printf("Inserted number of cards %d\n", $count);
         }
+        printf("New cards inserted: %d\n", $count);
         $entityManager->flush();
         $entityManager->clear();
         return new Response('Cards created!');
+    }
+
+    #[Route('/updateDB')]
+    public function updateDB(HttpClientInterface $client, EntityManagerInterface $entityManager): Response
+    {
+        $this->createCards($client, $entityManager);
+        $this->uploadImages($client, $entityManager);
+        return new Response('Database updated!');
     }
 }

@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\Card;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -22,7 +24,7 @@ class CardRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('c')
             ->select('c.id')
             ->getQuery()
-            ->getResult();
+            ->getResult(AbstractQuery::HYDRATE_SCALAR_COLUMN);
     }
 
     public function findCardByName(string $name): array
