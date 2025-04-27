@@ -4,8 +4,7 @@
 
 {% block body %}
 
-    <!-- TODO: Add a navbar with title, language that change card name, back to top button ... -->
-    <h1 id="title">Nibiru Token Calculator</h1>
+    <!-- TODO: Add a navbar with title, language that change card name -->
 
     <div id="external-container">
         <img id="nibiru-token-image" src=" {{ asset('images/cards/primal_being_token.jpg') }}" alt="Primal Being Token">
@@ -29,7 +28,7 @@
 
         {{ component('CardSearch') }}
     </div>
-    <button id="back-to-top">Back to Top</button>
+    <button id="back-to-top" type="button">Back to Top</button>
     <script>
         let totalAtk = 0;
         let totalDef = 0;

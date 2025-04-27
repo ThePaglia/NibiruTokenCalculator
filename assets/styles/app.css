@@ -1,3 +1,8 @@
+nav {
+    align-items: center;
+    background-color: darkviolet;
+}
+
 #title {
     text-align: center;
     margin-top: 20px;

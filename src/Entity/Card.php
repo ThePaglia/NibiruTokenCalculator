@@ -24,6 +24,18 @@ class Card
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $smallImageURL = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $fr_name = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $de_name = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $it_name = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $pt_name = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -78,6 +90,54 @@ class Card
     public function setSmallImageURL(?string $smallImageURL): static
     {
         $this->smallImageURL = $smallImageURL;
+
+        return $this;
+    }
+
+    public function getFrName(): ?string
+    {
+        return $this->fr_name;
+    }
+
+    public function setFrName(string $fr_name): static
+    {
+        $this->fr_name = $fr_name;
+
+        return $this;
+    }
+
+    public function getDeName(): ?string
+    {
+        return $this->de_name;
+    }
+
+    public function setDeName(string $de_name): static
+    {
+        $this->de_name = $de_name;
+
+        return $this;
+    }
+
+    public function getItName(): ?string
+    {
+        return $this->it_name;
+    }
+
+    public function setItName(string $it_name): static
+    {
+        $this->it_name = $it_name;
+
+        return $this;
+    }
+
+    public function getPtName(): ?string
+    {
+        return $this->pt_name;
+    }
+
+    public function setPtName(string $pt_name): static
+    {
+        $this->pt_name = $pt_name;
 
         return $this;
     }
