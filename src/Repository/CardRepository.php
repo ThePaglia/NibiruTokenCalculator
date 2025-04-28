@@ -27,10 +27,17 @@ class CardRepository extends ServiceEntityRepository
             ->getResult(AbstractQuery::HYDRATE_SCALAR_COLUMN);
     }
 
-    public function findCardByName(string $name): array
+    public function findCardByNameAndLanguage(string $name, string $language): array
     {
+        $languageColumn = match ($language) {
+            'fr' => 'c.fr_name',
+            'de' => 'c.de_name',
+            'it' => 'c.it_name',
+            'pt' => 'c.pt_name',
+            default => 'c.name',
+        };
         return $this->createQueryBuilder('c')
-            ->andWhere('c.name LIKE :name')
+            ->andWhere($languageColumn . ' LIKE :name')
             ->setParameter('name', '%' . $name . '%')
             ->getQuery()
             ->getResult();
